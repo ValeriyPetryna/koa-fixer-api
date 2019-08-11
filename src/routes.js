@@ -6,6 +6,4 @@ const router = new Router();
 
 router.get('users', UserController);
 
-// json.users 
-
 module.exports = router;
