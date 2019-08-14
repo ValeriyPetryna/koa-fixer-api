@@ -1,9 +1,11 @@
 const Router = require('koa-router');
-const UserController = require('./UserController');
+const ctrl = require('./controllers');
 const val = require('./validators');
 
 const router = new Router();
 
-router.get('users', UserController);
+router.get('users', ctrl.users);
+
+// json.users 
 
 module.exports = router;
