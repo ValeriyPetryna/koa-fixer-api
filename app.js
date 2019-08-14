@@ -2,27 +2,24 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const mongoose = require('mongoose');
 const bodyParser = require('koa-bodyparser');
-const appRoutes = require('./src/routes');
 const config = require('./config');
 const passport = require('koa-passport'); //реализация passport для Koa
-const LocalStrategy = require('passport-local'); //локальная стратегия авторизации
-const JwtStrategy = require('passport-jwt').Strategy; // авторизация через JWT
-const ExtractJwt = require('passport-jwt').ExtractJwt; // авторизация через JWT
-
-
+const mongo = require('./src/mongo');
 
 const app = new Koa();
 const router = new Router();
 
-mongoose.connect(config.connectionString, { dbName: 'fixer_db', useNewUrlParser: true });
+mongo();
+//mongoose.connect(config.connectionString, { dbName: 'fixer_db', useNewUrlParser: true, useCreateIndex: true });
+//mongoose.connection.on('error', console.error);
 
-app.use(passport.initialize()); // сначала passport
+app.use(passport.initialize()); // passport
 
 app.use(bodyParser({
   multipart: true,
 }));
 
-router.use("/", appRoutes.routes());
+router.use("/accounts", require('./src/accounts/routes').routes());
 app.use(router.routes());
 
 app.listen(config.port, () => {

@@ -1,10 +1,10 @@
 const Router = require('koa-router');
 const ctrl = require('./controllers');
-const val = require('./validators');
 
 const router = new Router();
 
-router.get('users', ctrl.users);
+router.get('/sign-in', ctrl.signIn);
+router.get('/sign-up', ctrl.signUp);
 
 // json.users 
 
