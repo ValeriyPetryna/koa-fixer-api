@@ -1,19 +1,19 @@
 const Koa = require('koa');
 const Router = require('koa-router');
-const mongoose = require('mongoose');
 const bodyParser = require('koa-bodyparser');
-const config = require('./config');
-const passport = require('koa-passport'); //реализация passport для Koa
-const mongo = require('./src/mongo');
+const config = require('./src/libs/config');
+const mongo = require('./src/libs/mongo');
+const passport = require('./src/libs/passport/index');
+
+passport.initialize(); // passport
 
 const app = new Koa();
 const router = new Router();
 
 mongo();
-//mongoose.connect(config.connectionString, { dbName: 'fixer_db', useNewUrlParser: true, useCreateIndex: true });
-//mongoose.connection.on('error', console.error);
 
-app.use(passport.initialize()); // passport
+
+
 
 app.use(bodyParser({
   multipart: true,

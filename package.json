@@ -26,15 +26,13 @@
     "eslint-plugin-import": "^2.18.0"
   },
   "dependencies": {
-    "config": "^3.2.2",
+    "jwt-simple": "^0.5.6",
     "koa": "^2.7.0",
     "koa-body": "^4.1.0",
     "koa-bodyparser": "^4.2.1",
     "koa-context-validator": "^0.4.1",
     "koa-passport": "^4.1.3",
     "koa-router": "^7.4.0",
-    "koa-static": "^5.0.0",
-    "koa-views": "^6.2.0",
     "mongo": "^0.1.0",
     "mongodb": "^3.3.0-beta2",
     "mongoose": "^5.6.7",

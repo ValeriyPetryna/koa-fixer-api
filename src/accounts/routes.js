@@ -1,10 +1,12 @@
 const Router = require('koa-router');
+const passport = require('koa-passport');
 const ctrl = require('./controllers');
 
 const router = new Router();
 
-router.get('/sign-in', ctrl.signIn);
+router.post('/sign-in', ctrl.signIn);
 router.get('/sign-up', ctrl.signUp);
+router.get('/profile', passport.authenticate('jwt', { session: false }), ctrl.profile);
 
 // json.users 
 

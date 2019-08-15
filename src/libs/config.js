@@ -12,4 +12,5 @@ module.exports = {
             iterations: 100,
         },
     },
+    jwtSecret: 'asdasdascv11!2',
 };
