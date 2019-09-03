@@ -4,6 +4,7 @@ const User = require("./models/user");
 const config = require("../libs/config");
 const sendEmail = require("../utils/sendEmail");
 const mongoose = require("mongoose");
+const uploadS3 = require("../utils/uploadPhotos");
 
 exports.signUp = async ctx => {
   const { body } = ctx.request;
@@ -73,5 +74,16 @@ exports.testEmail = async ctx => {
   );
   ctx.body = {
     success: true,
+  };
+};
+
+exports.updateUserPhoto = async ctx => {
+  const photo = await uploadS3(
+    config.aws.userPhotoFolder,
+    ctx.request.files.photo
+  );
+  await User.findByIdAndUpdate(ctx.state.user._id, { photo });
+  ctx.body = {
+    photo: photo,
   };
 };

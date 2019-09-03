@@ -1,6 +1,6 @@
 const Koa = require("koa");
 const Router = require("koa-router");
-const bodyParser = require("koa-bodyparser");
+const bodyParser = require("koa-body");
 const config = require("./src/libs/config");
 const mongo = require("./src/libs/mongo");
 const passport = require("./src/libs/passport/index");

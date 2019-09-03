@@ -14,5 +14,10 @@ router.get(
 router.get("/email", ctrl.testEmail);
 router.post("/check-email", ctrl.check);
 router.put("/password", ctrl.password);
+router.put(
+  "/photo",
+  passport.authenticate("jwt", { session: false }),
+  ctrl.updateUserPhoto
+);
 
 module.exports = router;

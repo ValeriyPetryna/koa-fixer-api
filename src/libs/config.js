@@ -18,4 +18,10 @@ module.exports = {
     apiKey:
       "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",
   },
+  aws: {
+    accessKeyId: "AKIAVUM7TYM4QDPFLUXV",
+    secretAccessKey: "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",
+    bucketName: "fixer-app",
+    userPhotoFolder: "user-photos",
+  },
 };
