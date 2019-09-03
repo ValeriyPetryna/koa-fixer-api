@@ -1,42 +1,77 @@
-const passport = require('koa-passport');
-const jwt = require('jwt-simple');
-const User = require('./models/user');
-const config = require('../libs/config');
+const passport = require("koa-passport");
+const jwt = require("jwt-simple");
+const User = require("./models/user");
+const config = require("../libs/config");
+const sendEmail = require("../utils/sendEmail");
+const mongoose = require("mongoose");
+
+exports.signUp = async ctx => {
+  const { body } = ctx.request;
+  const user = new User({
+    name: body.name,
+    surname: body.surname,
+    username: body.username,
+    email: body.email,
+    password: body.password,
+  });
+  await user.save();
+  ctx.status = 201;
+  ctx.body = {
+    registration: user,
+  };
+};
 
 exports.signIn = async (ctx, next) => {
-    await passport.authenticate('local', (err, user) => {
-        if (user) {
-            let payload = {
-                id: user._id,
-            }
-            ctx.body = {
-                token: jwt.encode(payload, config.jwtSecret),
-                user: {
-                    fullName: user.fullName,
-                    email: user.email,
-                    photo: user.photo
-                },
-            };
-        } else {
-            ctx.body = {
-                error: err,
-            };
-        }
-    })(ctx, next);
+  await passport.authenticate("local", (err, user) => {
+    if (user) {
+      const payload = {
+        id: user._id,
+        email: user.email,
+      };
+      ctx.body = {
+        token: jwt.encode(payload, config.jwtSecret),
+        user: {
+          name: user.name,
+          surname: user.surname,
+          gender: user.gender,
+          email: user.email,
+          photo: user.photo,
+        },
+      };
+      user.save();
+    } else {
+      ctx.body = {
+        error: err,
+      };
+    }
+  })(ctx, next);
+};
+exports.check = async ctx => {
+  const findItem = await User.find({ email: ctx.request.body.email });
+  ctx.body = {
+    people: findItem,
+  };
+};
+exports.password = async ctx => {
+  const body = ctx.request.body;
+  await User.findByIdAndDelete(body._id);
+  ctx.body = {
+    password: body.password,
+  };
 };
 
-exports.signUp = async (ctx) => {
-    const user = new User({
-        fullName: 'Vasik Pupkin',
-        email: 'vasik@pup.com',
-        password: 'qwerty',
-    });
-    await user.save();
-    ctx.body = {
-        success: true,
-    };
+exports.profile = async ctx => {
+  ctx.body = "ONLY FOR USERS";
 };
 
-exports.profile = async (ctx) => {
-    ctx.body = 'ONLY FOR USERS';
-}
+exports.testEmail = async ctx => {
+  await sendEmail(
+    "valeriypetrina@gmail.com",
+    "notifications@example.com",
+    "Hello!",
+    "<p>test data </p>"
+  );
+  ctx.body = {
+    success: true,
+  };
+};

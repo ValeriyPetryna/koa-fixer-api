@@ -1,73 +1,126 @@
-const mongoose = require('mongoose');
-const config = require('../../libs/config');
-const crypto = require('crypto');
+const mongoose = require("mongoose");
+const config = require("../../libs/config");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
-    fullName: {
-        type: String,
-    },
-    email: {
-        type: String,
-        unique: true,
-        required: true,
-        /*validate: {
+  name: {
+    type: String,
+    required: true,
+  },
+  surname: {
+    type: String,
+    required: true,
+  },
+  username: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    /*validate: {
             validator: function checkEmail(value) {
     
             },
             message: props => `${props.value} is not a valid email.`
         }*/
-    },
-    passwordHash: {
-        type: String,
-    },
-    salt: {
-        type: String,
-    },
+  },
+  photo: {
+    type: String,
+    default: config.defaultUserPhotoUrl,
+  },
+  gender: {
+    type: String,
+    enum: ["Mr", "Ms", "null?"],
+    default: "null?",
+  },
+  country: {
+    type: String,
+    default: "Ukraine",
+  },
+  stack: {
+    type: String,
+    default: "Front-end",
+  },
+  dailyRate: {
+    type: Number,
+    default: 500,
+  },
+  mobile: {
+    type: String,
+  },
+  rating: {
+    type: Number,
+    default: 3,
+  },
+  company: {
+    type: String,
+  },
+  token: {
+    type: String,
+    default: "token",
+  },
+  passwordHash: {
+    type: String,
+  },
+  salt: {
+    type: String,
+  },
 });
 
-userSchema.virtual('password')
-    .set(function (password) {
-        if (!password) {
-            this.invalidate('password', 'Password can\'t be empty!');
-        }
+userSchema
+  .virtual("password")
+  .set(function(password) {
+    if (!password) {
+      this.invalidate("password", "Password can't be empty!");
+    }
 
-        if (password !== undefined) {
-            if (password.length < 6) {
-                this.invalidate('password', 'Password can\'t be less than 6 symbols!');
-            }
-        }
+    if (password !== undefined) {
+      if (password.length < 6) {
+        this.invalidate("password", "Password can't be less than 6 symbols!");
+      }
+    }
 
-        this._plainPassword = password;
+    this._plainPassword = password;
 
-        if (password) {
-            this.salt = crypto.randomBytes(config.crypto.hash.length).toString('base64');
-            this.passwordHash = crypto.pbkdf2Sync(
-                password,
-                this.salt,
-                config.crypto.hash.iterations,
-                config.crypto.hash.length,
-                'sha1'
-            ).toString('base64');
-        } else {
-            this.salt = undefined;
-            this.passwordHash = undefined;
-        }
-    })
-    .get(function () {
-        return this._plainPassword;
-    });
+    if (password) {
+      this.salt = crypto
+        .randomBytes(config.crypto.hash.length)
+        .toString("base64");
+      this.passwordHash = crypto
+        .pbkdf2Sync(
+          password,
+          this.salt,
+          config.crypto.hash.iterations,
+          config.crypto.hash.length,
+          "sha1"
+        )
+        .toString("base64");
+    } else {
+      this.salt = undefined;
+      this.passwordHash = undefined;
+    }
+  })
+  .get(function() {
+    return this._plainPassword;
+  });
 
-userSchema.methods.checkPassword = function (password) {
-    if (!password) return false;
-    if (!this.passwordHash) return false;
+userSchema.methods.checkPassword = function(password) {
+  if (!password) return false;
+  if (!this.passwordHash) return false;
 
-    return crypto.pbkdf2Sync(
+  return (
+    crypto
+      .pbkdf2Sync(
         password,
         this.salt,
         config.crypto.hash.iterations,
         config.crypto.hash.length,
-        'sha1').toString('base64') === this.passwordHash;
+        "sha1"
+      )
+      .toString("base64") === this.passwordHash
+  );
 };
 
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);
