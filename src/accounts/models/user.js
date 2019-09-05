@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const config = require("../../libs/config");
 const crypto = require("crypto");
+const Category = require("./category");
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -32,8 +34,6 @@ const userSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    enum: ["Mr", "Ms", "null?"],
-    default: "null?",
   },
   country: {
     type: String,
@@ -41,14 +41,15 @@ const userSchema = new mongoose.Schema({
   },
   stack: {
     type: String,
-    default: "Front-end",
+    default: "Back-end",
   },
   dailyRate: {
     type: Number,
-    default: 500,
+    default: 300,
   },
   mobile: {
     type: String,
+    default: 000 - 000 - 00,
   },
   rating: {
     type: Number,

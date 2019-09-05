@@ -32,6 +32,7 @@ exports.signIn = async (ctx, next) => {
       ctx.body = {
         token: jwt.encode(payload, config.jwtSecret),
         user: {
+          id: user._id,
           name: user.name,
           surname: user.surname,
           gender: user.gender,
@@ -61,10 +62,6 @@ exports.password = async ctx => {
   };
 };
 
-exports.profile = async ctx => {
-  ctx.body = "ONLY FOR USERS";
-};
-
 exports.testEmail = async ctx => {
   await sendEmail(
     "valeriypetrina@gmail.com",
@@ -74,6 +71,14 @@ exports.testEmail = async ctx => {
   );
   ctx.body = {
     success: true,
+  };
+};
+/////////////////////////////////////////////////////////////////////////////////////////
+
+exports.profile = async ctx => {
+  const user = await User.findById(ctx.state.user._id);
+  ctx.body = {
+    user,
   };
 };
 
@@ -86,4 +91,10 @@ exports.updateUserPhoto = async ctx => {
   ctx.body = {
     photo: photo,
   };
+};
+
+exports.profileUpdate = async ctx => {
+  const { body } = ctx.request;
+  await User.findByIdAndUpdate(body._id, body);
+  ctx.body = body;
 };
