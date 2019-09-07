@@ -30,7 +30,7 @@ exports.signIn = async (ctx, next) => {
         email: user.email,
       };
       ctx.body = {
-        token: jwt.encode(payload, config.jwtSecret),
+        token: jwt.encode(payload, process.env.JWT_SECRET),
         user: {
           id: user._id,
           name: user.name,
@@ -84,7 +84,7 @@ exports.profile = async ctx => {
 
 exports.updateUserPhoto = async ctx => {
   const photo = await uploadS3(
-    config.aws.userPhotoFolder,
+    process.env.AWS_USER_PHOTO_FOLDER,
     ctx.request.files.photo
   );
   await User.findByIdAndUpdate(ctx.state.user._id, { photo });
@@ -98,3 +98,10 @@ exports.profileUpdate = async ctx => {
   await User.findByIdAndUpdate(body._id, body);
   ctx.body = body;
 };
+
+// exports.profile = async ctx => {
+//   const user = await User.findById(ctx.state.user._id).select('email','name');
+//   ctx.body = {
+//     user,
+//   };
+// };

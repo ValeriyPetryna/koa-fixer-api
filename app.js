@@ -25,6 +25,6 @@ router.use("/search", require("./src/search/routes").routes());
 
 app.use(router.routes());
 
-app.listen(config.port, () => {
-  console.log(`Server is running on port ${config.port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
 });

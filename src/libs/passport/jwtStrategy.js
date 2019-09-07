@@ -5,7 +5,7 @@ const User = require("../../accounts/models/user");
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("JWT"),
-  secretOrKey: config.jwtSecret,
+  secretOrKey: process.env.JWT_SECRET,
 };
 
 module.exports = new JwtStrategy(opts, (jwtPayload, done) => {

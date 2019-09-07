@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 
 const router = new Router();
 
-router.get("/people", ctrl.people);
+router.get("/workers", ctrl.workers);
+
+//router.get("/filter", ctrl.findByName);
 
 module.exports = router;

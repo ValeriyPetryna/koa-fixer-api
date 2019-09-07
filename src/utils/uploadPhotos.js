@@ -12,7 +12,7 @@ module.exports = (folder, file) =>
 
     s3.upload(
       {
-        Bucket: config.aws.bucketName,
+        Bucket: process.env.AWS_BUCKET_NAME,
         Key: filename,
         Body: fs.createReadStream(file.path),
       },

@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 const config = require("../../libs/config");
 const crypto = require("crypto");
-const Category = require("./category");
-const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -30,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: config.defaultUserPhotoUrl,
+    default: process.env.DEFAULT_USER_PHOTO,
   },
   gender: {
     type: String,
@@ -76,7 +74,6 @@ userSchema
     if (!password) {
       this.invalidate("password", "Password can't be empty!");
     }
-
     if (password !== undefined) {
       if (password.length < 6) {
         this.invalidate("password", "Password can't be less than 6 symbols!");
@@ -86,17 +83,9 @@ userSchema
     this._plainPassword = password;
 
     if (password) {
-      this.salt = crypto
-        .randomBytes(config.crypto.hash.length)
-        .toString("base64");
+      this.salt = crypto.randomBytes(100).toString("base64");
       this.passwordHash = crypto
-        .pbkdf2Sync(
-          password,
-          this.salt,
-          config.crypto.hash.iterations,
-          config.crypto.hash.length,
-          "sha1"
-        )
+        .pbkdf2Sync(password, this.salt, 100, 100, "sha1")
         .toString("base64");
     } else {
       this.salt = undefined;
@@ -113,13 +102,7 @@ userSchema.methods.checkPassword = function(password) {
 
   return (
     crypto
-      .pbkdf2Sync(
-        password,
-        this.salt,
-        config.crypto.hash.iterations,
-        config.crypto.hash.length,
-        "sha1"
-      )
+      .pbkdf2Sync(password, this.salt, 100, 100, "sha1")
       .toString("base64") === this.passwordHash
   );
 };
