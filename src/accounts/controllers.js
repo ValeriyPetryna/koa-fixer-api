@@ -87,6 +87,7 @@ exports.updateUserPhoto = async ctx => {
     process.env.AWS_USER_PHOTO_FOLDER,
     ctx.request.files.photo
   );
+
   await User.findByIdAndUpdate(ctx.state.user._id, { photo });
   ctx.body = {
     photo: photo,
