@@ -1,10 +1,10 @@
-const passport = require("koa-passport");
-const jwt = require("jwt-simple");
-const User = require("./models/user");
-const config = require("../libs/config");
-const sendEmail = require("../utils/sendEmail");
-const mongoose = require("mongoose");
-const uploadS3 = require("../utils/uploadPhotos");
+const passport = require('koa-passport');
+const jwt = require('jwt-simple');
+const User = require('./models/user');
+const config = require('../libs/config');
+const sendEmail = require('../utils/sendEmail');
+const mongoose = require('mongoose');
+const uploadS3 = require('../utils/uploadPhotos');
 
 exports.signUp = async ctx => {
   const { body } = ctx.request;
@@ -23,7 +23,7 @@ exports.signUp = async ctx => {
 };
 
 exports.signIn = async (ctx, next) => {
-  await passport.authenticate("local", (err, user) => {
+  await passport.authenticate('local', (err, user) => {
     if (user) {
       const payload = {
         id: user._id,
@@ -63,12 +63,7 @@ exports.password = async ctx => {
 };
 
 exports.testEmail = async ctx => {
-  await sendEmail(
-    "valeriypetrina@gmail.com",
-    "notifications@example.com",
-    "Hello!",
-    "<p>test data </p>"
-  );
+  await sendEmail('valeriypetrina@gmail.com', 'notifications@example.com', 'Hello!', '<p> test data </p>');
   ctx.body = {
     success: true,
   };
@@ -76,17 +71,15 @@ exports.testEmail = async ctx => {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 exports.profile = async ctx => {
-  const user = await User.findById(ctx.state.user._id);
+  const userID = ctx.state.user._id;
+  const user = await User.findById({ _id: userID }, ' photo name surname stack dailyRate email country mobile rating company gender username');
   ctx.body = {
     user,
   };
 };
 
 exports.updateUserPhoto = async ctx => {
-  const photo = await uploadS3(
-    process.env.AWS_USER_PHOTO_FOLDER,
-    ctx.request.files.photo
-  );
+  const photo = await uploadS3(process.env.AWS_USER_PHOTO_FOLDER, ctx.request.files.photo);
 
   await User.findByIdAndUpdate(ctx.state.user._id, { photo });
   ctx.body = {

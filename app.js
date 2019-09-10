@@ -1,16 +1,17 @@
-const Koa = require("koa");
-const Router = require("koa-router");
-const bodyParser = require("koa-body");
-const config = require("./src/libs/config");
-const mongo = require("./src/libs/mongo");
-const passport = require("./src/libs/passport/index");
-const cors = require("@koa/cors");
+const Koa = require('koa');
+const Router = require('koa-router');
+const bodyParser = require('koa-body');
+const config = require('./src/libs/config');
+const mongo = require('./src/libs/mongo');
+const passport = require('./src/libs/passport/index');
+const cors = require('@koa/cors');
+const http = require('http');
 
 passport.initialize(); // passport
 
 const app = new Koa();
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
+const server = require('http').createServer(app.callback());
+const io = require('socket.io')(server);
 
 app.use(cors());
 const router = new Router();
@@ -23,22 +24,17 @@ app.use(
   })
 );
 
-router.use("/accounts", require("./src/accounts/routes").routes());
-router.use("/search", require("./src/search/routes").routes());
+router.use('/accounts', require('./src/accounts/routes').routes());
+router.use('/search', require('./src/search/routes').routes());
 app.use(router.routes());
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
 
-// io.origins("*:*");
-// io.on("connection", socket => {
-//   socket.on("submitMessage", payload => {
-//     const { message, token } = payload;
-//     const userLogin = jwt.decode(token).login;
-//     socket.broadcast.emit("newMessage", { message, user: userLogin });
-//     socket.emit("newMessage", { message, user: userLogin });
-//     console.log(message);
-//     console.log("сохраняем ! ЭТУ ШЛЯПУ");
-//   });
-// });
+io.on('connection', socket => {
+  console.log('User connected');
+  socket.on('message', msg => {
+    io.emit('message', msg);
+  });
+});

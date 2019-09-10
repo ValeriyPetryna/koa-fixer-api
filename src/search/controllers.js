@@ -1,58 +1,66 @@
-const User = require("../accounts/models/user");
+const User = require('../accounts/models/user');
 
 exports.workers = async ctx => {
-  const allUsers = await User.find();
+  const allUsers = await User.find({}, 'name surname stack dailyRate email country photo mobile rating company gender username');
   ctx.body = {
     allUsers,
   };
 };
+
 exports.sort = async ctx => {
   const { body } = ctx.request;
-  console.log(body);
-  // const Sorted = await User.find(
-  //   { country: body.country },
-  //   "name stack dailyRate"
-  // );
-  const param = body.sort;
-  if (param !== "by price" || param !== "by rating") {
-    ctx.response.status = 404;
-    ctx.body = {
-      error: "Only price and rating params are available",
-    };
-  }
-  try {
-    if (param === "by price") {
-      const dailyRate = await User.find(
-        { country: body.country },
-        "name stack dailyRate"
-      ).sort({ dailyRate: -1 });
-      ctx.response.status = 200;
-      ctx.body = {
-        workers: dailyRate,
-      };
+  // clear empty request params
+  Object.keys(body).forEach(key => body[key] == null || (body[key].length < 1 && delete body[key]));
+  console.log(body.stack);
+  let query = {};
+  if (body.country || body.stack || body.name) {
+    query.$and = [];
+    if (body.country) {
+      query.$and.push({ country: body.country });
     }
-    if (param === "by rating") {
-      const rating = await User.find("name stack dailyRate").sort({
-        rating: -1,
+
+    if (body.stack) {
+      query.$and.push({ stack: body.stack });
+    }
+
+    if (body.name) {
+      query.$and.push({
+        $or: [
+          {
+            name: {
+              $regex: body.name,
+              $options: 'i',
+            },
+          },
+          {
+            surname: {
+              $regex: body.name,
+              $options: 'i',
+            },
+          },
+        ],
       });
-      ctx.response.status = 200;
-      ctx.body = {
-        workers: rating,
-      };
     }
+  }
+
+  try {
+    const dailyRate = await User.find(query, 'name surname username email country stack dailyRate rating photo').sort({
+      [`${body.sort || 'dailyRate'}`]: -1,
+    });
+
+    ctx.response.status = 200;
+    ctx.body = {
+      sortedArray: dailyRate,
+    };
   } catch (err) {
     ctx.body = {
       err,
     };
   }
-  console.log(ctx.body);
-  // ctx.body = {
-  //   Sorted,
-  // };
 };
 
 exports.category = async ctx => {
-  const categoryUsers = await User.find({ stack: "Back-end" });
+  const categoryUsers = await User.find({ stack: 'Back-end' });
   ctx.body = {
     categoryUsers,
   };
