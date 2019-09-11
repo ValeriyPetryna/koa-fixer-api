@@ -44,7 +44,7 @@ exports.sort = async ctx => {
   }
 
   try {
-    const dailyRate = await User.find(query, 'name surname username email country stack dailyRate rating photo').sort({
+    const dailyRate = await User.find(query, 'name surname stack dailyRate email country photo mobile rating company gender username').sort({
       [`${body.sort || 'dailyRate'}`]: -1,
     });
 

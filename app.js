@@ -6,6 +6,7 @@ const mongo = require('./src/libs/mongo');
 const passport = require('./src/libs/passport/index');
 const cors = require('@koa/cors');
 const http = require('http');
+const Chat = require('./src/models/chat');
 
 passport.initialize(); // passport
 
@@ -33,7 +34,6 @@ server.listen(process.env.PORT, () => {
 });
 
 io.on('connection', socket => {
-  console.log('User connected');
   socket.on('message', msg => {
     io.emit('message', msg);
   });

@@ -29,7 +29,6 @@
     "@koa/cors": "^2.2.3",
     "@sendgrid/mail": "^6.4.0",
     "aws-sdk": "^2.522.0",
-    "dateformat": "^3.0.3",
     "dotenv": "^8.1.0",
     "http": "0.0.0",
     "jwt-simple": "^0.5.6",

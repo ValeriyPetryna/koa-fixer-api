@@ -68,7 +68,6 @@ exports.testEmail = async ctx => {
     success: true,
   };
 };
-/////////////////////////////////////////////////////////////////////////////////////////
 
 exports.profile = async ctx => {
   const userID = ctx.state.user._id;
@@ -93,9 +92,15 @@ exports.profileUpdate = async ctx => {
   ctx.body = body;
 };
 
-// exports.profile = async ctx => {
-//   const user = await User.findById(ctx.state.user._id).select('email','name');
-//   ctx.body = {
-//     user,
-//   };
-// };
+exports.deleteUser = async ctx => {
+  const userID = ctx.state.user._id;
+  try {
+    await User.findByIdAndDelete({_id: userID});
+    ctx.response.status = 204;
+  } catch (err) {
+    ctx.response.status = 500;
+    ctx.body = {
+      err,
+    };
+  }
+}
