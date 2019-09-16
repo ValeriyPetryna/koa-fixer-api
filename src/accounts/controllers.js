@@ -95,7 +95,8 @@ exports.profileUpdate = async ctx => {
 exports.deleteUser = async ctx => {
   const userID = ctx.state.user._id;
   try {
-    await User.findByIdAndDelete({_id: userID});
+    const user = await User.findById(userID);
+    await user.remove();
     ctx.response.status = 204;
   } catch (err) {
     ctx.response.status = 500;
@@ -103,4 +104,4 @@ exports.deleteUser = async ctx => {
       err,
     };
   }
-}
+};
