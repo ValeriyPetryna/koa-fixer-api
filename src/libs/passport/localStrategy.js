@@ -1,5 +1,5 @@
 const LocalStrategy = require('passport-local');
-const User = require('../../accounts/models/user');
+const User = require('../../users/models/user');
 
 const opts = {
     usernameField: 'email',

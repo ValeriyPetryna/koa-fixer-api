@@ -24,9 +24,10 @@ app.use(
     multipart: true,
   })
 );
+router.use('/login', require('./src/users/login/routes').routes());
+router.use('/users', require('./src/users/auth/routes').routes());
+router.use('/photo', require('./src/photo/routes').routes());
 
-router.use('/accounts', require('./src/accounts/routes').routes());
-router.use('/search', require('./src/search/routes').routes());
 app.use(router.routes());
 
 server.listen(process.env.PORT, () => {
